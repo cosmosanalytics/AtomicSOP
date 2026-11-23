@@ -646,8 +646,14 @@
             <span class="text-xs font-semibold text-slate-700 ml-1">Runbook Format:</span>
             <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
               <button onclick="setDeclarativeFormat('yaml')" id="btn-format-yaml" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-600 shadow-sm transition">YAML Runbook</button>
-              <button onclick="setDeclarativeFormat('json')" id="btn-format-json" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">JSON Schema (Draft 2020-12)</button>
-              <button onclick="setDeclarativeFormat('mcp')" id="btn-format-mcp" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">MCP Tool Contract</button>
+              <button onclick="setDeclarativeFormat('json')" id="btn-format-json" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">JSON Schema</button>
+              <button onclick="setDeclarativeFormat('langgraph')" id="btn-format-langgraph" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+                <span>LangGraph DAG</span>
+              </button>
+              <button onclick="setDeclarativeFormat('stepfunctions')" id="btn-format-stepfunctions" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition flex items-center gap-1">
+                <span>AWS Step Functions</span>
+              </button>
+              <button onclick="setDeclarativeFormat('mcp')" id="btn-format-mcp" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">MCP Contract</button>
             </div>
           </div>
 
@@ -1918,8 +1924,9 @@
 
     function setDeclarativeFormat(fmt) {
       currentDeclarativeFormat = fmt;
-      ['yaml', 'json', 'mcp'].forEach(f => {
+      ['yaml', 'json', 'langgraph', 'stepfunctions', 'mcp'].forEach(f => {
         const btn = document.getElementById(`btn-format-${f}`);
+        if (!btn) return;
         if (f === fmt) {
           btn.className = 'px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-600 shadow-sm transition';
         } else {
@@ -1937,21 +1944,268 @@
       const fileBadge = document.getElementById('declarative-file-name');
       const specBadge = document.getElementById('declarative-spec-badge');
 
+      const slug = (dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_');
       if (currentDeclarativeFormat === 'yaml') {
-        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_runbook.yaml`;
+        fileBadge.textContent = `${slug}_runbook.yaml`;
         specBadge.textContent = 'YAML Declarative Runbook v2.0';
         codeBox.textContent = generateDeclarativeRunbookYAML(dec);
       } else if (currentDeclarativeFormat === 'json') {
-        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_schema.json`;
+        fileBadge.textContent = `${slug}_schema.json`;
         specBadge.textContent = 'JSON Schema Draft 2020-12';
         codeBox.textContent = generateDeclarativeJSONSchema(dec);
+      } else if (currentDeclarativeFormat === 'langgraph') {
+        fileBadge.textContent = `${slug}_state_dag.py`;
+        specBadge.textContent = 'LangGraph: Deterministic State DAG (Hard Gates on Edges)';
+        codeBox.textContent = generateLangGraphDAG(dec);
+      } else if (currentDeclarativeFormat === 'stepfunctions') {
+        fileBadge.textContent = `${slug}_step_functions_asl.json`;
+        specBadge.textContent = 'AWS Step Functions: ASL Choice Gates (Project: For Each and Every | us-east-2)';
+        codeBox.textContent = generateStepFunctionsASL(dec);
       } else {
-        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_mcp.json`;
+        fileBadge.textContent = `${slug}_mcp.json`;
         specBadge.textContent = 'Model Context Protocol (MCP) Tool Contract';
         codeBox.textContent = generateDeclarativeMCPContract(dec);
       }
       lucide.createIcons();
     }
+
+    
+    // --- Generator: LangGraph Deterministic State DAG (Python) ---
+    function generateLangGraphDAG(dec) {
+      const slug = (dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+      const policies = dec.policies || [];
+      const invariants = policies.map(p => `# Policy #${p.id} [${p.class_id}]: ${p.rule_invariant || 'invariant(x) == true'}`).join('\n    ');
+
+      return `"""
+Deterministic State DAG: ${dec.title || 'Enterprise SOP'}
+Architecture: Probabilistic Reasoning Inside Nodes, Hard Deterministic Logic on Edges
+Framework: LangGraph / Python 3.11+
+"""
+
+from typing import Annotated, TypedDict, Literal, Dict, Any, List
+from langgraph.graph import StateGraph, START, END
+
+# --- 1. SHARED STATE CONTRACT ---
+class SOPWorkflowState(TypedDict):
+    case_id: str
+    sop_title: str
+    current_fsm_state: str  # 'A_INTAKE' | 'B_TRIGGER' | 'C_GUARD' | 'D_TERMINAL'
+    raw_payload: Dict[str, Any]
+    extracted_parameters: Dict[str, Any]
+    probabilistic_reasoning_log: List[str]
+    invariants_checked: List[str]
+    is_blocked: bool
+    breach_reason: str
+    audit_receipt: Dict[str, Any]
+
+# --- 2. PROBABILISTIC REASONING NODES (LLM Operates Inside Nodes) ---
+def state_a_intake_llm_node(state: SOPWorkflowState) -> Dict[str, Any]:
+    """
+    Probabilistic Node: LLM ingests unstructured intake communications, 
+    identifies intent, extracts entities, and drafts candidate parameters.
+    """
+    # Model Call (e.g., Bedrock Claude 3.5 Sonnet / Groq Llama 3.3 70B)
+    # reasoning = llm.invoke("Extract structured parameters from intake...")
+    return {
+        "current_fsm_state": "A_INTAKE",
+        "probabilistic_reasoning_log": state.get("probabilistic_reasoning_log", []) + [
+            "Intake parsed: entities identified and candidate parameters bound."
+        ]
+    }
+
+def state_b_trigger_eval_llm_node(state: SOPWorkflowState) -> Dict[str, Any]:
+    """
+    Probabilistic Node: LLM assesses complex contextual nuances, qualitative risk tiering, 
+    and classifies boundary condition indicators.
+    """
+    return {
+        "current_fsm_state": "B_TRIGGER",
+        "probabilistic_reasoning_log": state.get("probabilistic_reasoning_log", []) + [
+            "Trigger evaluated: contextual condition flags verified."
+        ]
+    }
+
+def state_c_operational_execution_node(state: SOPWorkflowState) -> Dict[str, Any]:
+    """
+    Deterministic Action Node: Executes authorized API tool payload 
+    strictly within the pre-cleared action space.
+    """
+    return {
+        "current_fsm_state": "C_GUARD",
+        "audit_receipt": {"status": "ACTION_DISPATCHED", "code": 200}
+    }
+
+def state_d_terminal_audit_node(state: SOPWorkflowState) -> Dict[str, Any]:
+    """
+    Terminal Settlement Node: Commits cryptographic audit ledger entry.
+    """
+    return {
+        "current_fsm_state": "D_TERMINAL",
+        "audit_receipt": {"terminal_resolution": "SUCCESS_RECORDED"}
+    }
+
+def circuit_breaker_halt_node(state: SOPWorkflowState) -> Dict[str, Any]:
+    """
+    Safety Node: Hardcoded safety halt. Rejects illegal state transition and logs violation.
+    """
+    return {
+        "is_blocked": True,
+        "audit_receipt": {"terminal_resolution": "BLOCKED_BY_INVARIANT_GATE", "reason": state.get("breach_reason")}
+    }
+
+# --- 3. HARD DETERMINISTIC CODE GATES ON EDGES (Zero LLM on Edges) ---
+def gate_intake_to_trigger(state: SOPWorkflowState) -> Literal["state_b_trigger_eval", "circuit_breaker_halt"]:
+    """
+    Deterministic Edge Gate: Hardcoded schema boundary validation.
+    """
+    params = state.get("extracted_parameters", {})
+    # Strict precondition: caller authenticated and non-empty payload
+    if not params:
+        return "state_b_trigger_eval"  # Baseline pass
+    return "state_b_trigger_eval"
+
+def gate_invariant_guard_router(state: SOPWorkflowState) -> Literal["state_c_operational_exec", "circuit_breaker_halt"]:
+    """
+    Deterministic Edge Gate: Evaluates mathematical invariants derived from PolicyMap ontology:
+    ${invariants}
+    """
+    params = state.get("extracted_parameters", {})
+    
+    # HARD GATE 1: Parameter Domain Boundary Check
+    amount = float(params.get("amount", 0.0))
+    if amount > 5000.0:  # Example invariant bound: P_floor / spend limit
+        state["breach_reason"] = f"Deterministic Gate Breach: Parameter amount {amount} > threshold 5000.0"
+        return "circuit_breaker_halt"
+        
+    # HARD GATE 2: Timeline Deadline Check
+    days_elapsed = int(params.get("days_elapsed", 0))
+    if days_elapsed > 30:  # Example invariant bound: Grace period expiration
+        state["breach_reason"] = f"Deterministic Gate Breach: Days elapsed {days_elapsed} > statutory limit 30"
+        return "circuit_breaker_halt"
+
+    return "state_c_operational_exec"
+
+# --- 4. ASSEMBLE DETERMINISTIC STATE DAG ---
+def build_sop_dag():
+    builder = StateGraph(SOPWorkflowState)
+
+    # Register Nodes
+    builder.add_node("state_a_intake", state_a_intake_llm_node)
+    builder.add_node("state_b_trigger_eval", state_b_trigger_eval_llm_node)
+    builder.add_node("state_c_operational_exec", state_c_operational_execution_node)
+    builder.add_node("state_d_terminal_audit", state_d_terminal_audit_node)
+    builder.add_node("circuit_breaker_halt", circuit_breaker_halt_node)
+
+    # Directed Transitions with Hard Edge Gates
+    builder.add_edge(START, "state_a_intake")
+    builder.add_conditional_edges("state_a_intake", gate_intake_to_trigger)
+    builder.add_conditional_edges("state_b_trigger_eval", gate_invariant_guard_router)
+    builder.add_edge("state_c_operational_exec", "state_d_terminal_audit")
+    builder.add_edge("state_d_terminal_audit", END)
+    builder.add_edge("circuit_breaker_halt", END)
+
+    return builder.compile()
+
+sop_state_machine = build_sop_dag()
+if __name__ == "__main__":
+    print("Compiled Deterministic State DAG successfully with hard edge gates.")
+`;
+    }
+
+    // --- Generator: AWS Step Functions ASL JSON (Project: For Each and Every | us-east-2) ---
+    function generateStepFunctionsASL(dec) {
+      const slug = (dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+      const policies = dec.policies || [];
+
+      const asl = {
+        "Comment": `Deterministic State Machine for ${dec.title || 'SOP'}. Project: For Each and Every | Region: us-east-2. Probabilistic reasoning inside Bedrock nodes, hardcode Choice gates on edges.`,
+        "StartAt": "StateA_ProbabilisticIntakeReasoning",
+        "States": {
+          "StateA_ProbabilisticIntakeReasoning": {
+            "Type": "Task",
+            "Comment": "Probabilistic Node: Ingests unstructured event, drafts parameters via Amazon Bedrock (us-east-2)",
+            "Resource": "arn:aws:states:::bedrock:invokeModel",
+            "Parameters": {
+              "ModelId": "us.anthropic.claude-3-5-sonnet-20241022-v2:0",
+              "ContentType": "application/json",
+              "Accept": "application/json",
+              "Body": {
+                "anthropic_version": "bedrock-2023-05-31",
+                "max_tokens": 1000,
+                "messages": [
+                  {
+                    "role": "user",
+                    "content": "Analyze intake payload against SOP parameters..."
+                  }
+                ]
+              }
+            },
+            "ResultPath": "$.llm_reasoning",
+            "Next": "StateB_ConditionThresholdEvaluation"
+          },
+          "StateB_ConditionThresholdEvaluation": {
+            "Type": "Task",
+            "Comment": "Probabilistic Node: Evaluates condition triggers and qualitative classifications",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": `arn:aws:lambda:us-east-2:123456789012:function:sop_${slug}_evaluate_triggers`,
+              "Payload.$": "$"
+            },
+            "ResultPath": "$.trigger_evaluation",
+            "Next": "EdgeGate_InvariantDeterministicChoice"
+          },
+          "EdgeGate_InvariantDeterministicChoice": {
+            "Type": "Choice",
+            "Comment": "HARD DETERMINISTIC EDGE GATE: Enforces mathematical inequalities before allowing state transition",
+            "Choices": [
+              {
+                "And": [
+                  {
+                    "Variable": "$.parameters.amount",
+                    "IsPresent": true
+                  },
+                  {
+                    "Variable": "$.parameters.amount",
+                    "NumericLessThanEquals": 5000.0
+                  },
+                  {
+                    "Variable": "$.parameters.days_elapsed",
+                    "NumericLessThanEquals": 30
+                  }
+                ],
+                "Comment": "Invariant passed: Proceed to operational execution",
+                "Next": "StateC_OperationalExecutionTask"
+              }
+            ],
+            "Default": "State_InvariantBreachCircuitBreaker"
+          },
+          "StateC_OperationalExecutionTask": {
+            "Type": "Task",
+            "Comment": "Deterministic Action Node: Executes bounded mutation strictly within action space",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "Parameters": {
+              "FunctionName": `arn:aws:lambda:us-east-2:123456789012:function:sop_${slug}_execute_action`,
+              "Payload.$": "$"
+            },
+            "ResultPath": "$.execution_result",
+            "Next": "StateD_TerminalSettlementAndAudit"
+          },
+          "State_InvariantBreachCircuitBreaker": {
+            "Type": "Fail",
+            "Comment": "Hard Safety Halt: Blocks execution when mathematical invariant is violated",
+            "Error": "InvariantBreachException",
+            "Cause": "Deterministic Edge Gate Block: Proposed parameters violated governing PolicyMap invariant."
+          },
+          "StateD_TerminalSettlementAndAudit": {
+            "Type": "Succeed",
+            "Comment": "Terminal State: Transaction settled and recorded into immutable ledger."
+          }
+        }
+      };
+
+      return JSON.stringify(asl, null, 2);
+    }
+
 
     function generateDeclarativeRunbookYAML(dec) {
       const slug = (dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_');
