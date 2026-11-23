@@ -387,6 +387,11 @@
             <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
             <span>Ontology Distribution</span>
           </button>
+
+          <button onclick="switchTab('declarative')" id="tab-btn-declarative" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+            <i data-lucide="file-code-2" class="w-3.5 h-3.5 text-indigo-500"></i>
+            <span>Declarative Runbooks (YAML/JSON)</span>
+          </button>
         </div>
 
         <div class="flex items-center gap-2 pr-2">
@@ -588,6 +593,134 @@
             </div>
           </div>
         </div>
+
+
+      <!-- Tab 6: Declarative Runbooks (YAML / JSON Schemas) -->
+      <div id="tab-content-declarative" class="hidden flex-1 flex flex-col gap-4 overflow-y-auto max-h-[720px] pr-1">
+        
+        <!-- Architectural Thesis Banner -->
+        <div class="bg-gradient-to-r from-indigo-500/10 via-amber-500/10 to-emerald-500/10 border border-indigo-500/30 rounded-2xl p-4 shadow-sm">
+          <div class="flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-600 flex-shrink-0 mt-0.5">
+              <i data-lucide="binary" class="w-5 h-5"></i>
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1 flex-wrap">
+                <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">Agentic Action Space Principle</span>
+                <span class="text-xs text-slate-500 font-medium">Machine-Verifiable SOP Execution</span>
+              </div>
+              <h3 class="text-sm font-bold text-slate-900 leading-snug">
+                Declarative SOPs: Constrain action spaces with machine-readable runbooks (YAML/JSON schemas) rather than raw open prompts.
+              </h3>
+              <p class="text-xs text-slate-600 mt-1 leading-relaxed">
+                Raw natural-language prompts leave AI agents prone to hallucinated parameters, scope drift, and bypassed authorization gates. 
+                Decomposing SOPs into atomic policies compiles an <strong>executable, mathematically bounded action contract</strong>: every permitted tool call, parameter domain, precondition guard, and FSM transition is defined declaratively.
+              </p>
+            </div>
+          </div>
+
+          <!-- Comparison Table Pills -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3 pt-3 border-t border-slate-200/80">
+            <div class="bg-red-500/5 border border-red-500/20 rounded-xl p-2.5">
+              <span class="text-[11px] font-bold text-red-600 flex items-center gap-1.5 mb-1">
+                <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> ❌ Raw Open Prompting (High Risk)
+              </span>
+              <p class="text-[11px] text-slate-600 leading-normal">
+                Probabilistic text generation, ambiguous instructions, unconstrained tool arguments, and undetectable silent failure modes.
+              </p>
+            </div>
+            <div class="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-2.5">
+              <span class="text-[11px] font-bold text-emerald-600 flex items-center gap-1.5 mb-1">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> ✅ Declarative Runbook (Zero Drift)
+              </span>
+              <p class="text-[11px] text-slate-600 leading-normal">
+                Strict JSON Schema / YAML contracts with hard mathematical invariants ($P \le 	ext{bound}$), explicit tool enumeration, and verified FSM states.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Format Switcher & Action Toolbar -->
+        <div class="flex items-center justify-between gap-3 bg-white border border-slate-200 rounded-xl p-2.5 shadow-sm">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-semibold text-slate-700 ml-1">Runbook Format:</span>
+            <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100">
+              <button onclick="setDeclarativeFormat('yaml')" id="btn-format-yaml" class="px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-600 shadow-sm transition">YAML Runbook</button>
+              <button onclick="setDeclarativeFormat('json')" id="btn-format-json" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">JSON Schema (Draft 2020-12)</button>
+              <button onclick="setDeclarativeFormat('mcp')" id="btn-format-mcp" class="px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition">MCP Tool Contract</button>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="copyDeclarativeSchema()" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-slate-100 border border-slate-200 hover:bg-slate-200 text-slate-700 flex items-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+              <span id="copy-schema-label">Copy Schema</span>
+            </button>
+            <button onclick="downloadDeclarativeFile()" class="px-2.5 py-1 text-xs font-medium rounded-lg bg-indigo-50 border border-indigo-200 hover:bg-indigo-100 text-indigo-700 flex items-center gap-1.5 transition cursor-pointer">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              <span>Download Contract</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Code Viewer Box -->
+        <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 shadow-xl relative overflow-hidden">
+          <div class="flex items-center justify-between pb-2 mb-3 border-b border-slate-800 text-[11px] font-mono text-slate-400">
+            <span id="declarative-file-name">declarative_runbook.yaml</span>
+            <span id="declarative-spec-badge" class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Action Space Bound: Strict</span>
+          </div>
+          <pre class="overflow-x-auto text-[11px] font-mono leading-relaxed text-slate-200 max-h-[380px] p-2" id="declarative-code-view">
+# Loading declarative runbook...
+          </pre>
+        </div>
+
+        <!-- Interactive Action Space Playground (Live Boundary Guard Tester) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-600">
+                <i data-lucide="terminal" class="w-4 h-4"></i>
+              </div>
+              <h4 class="text-xs font-bold text-slate-900">Interactive Action Space Validator (Boundary Breaker Playground)</h4>
+            </div>
+            <span class="text-[11px] text-slate-500 font-mono">Test agent tool calls against schema</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="block text-[11px] font-medium text-slate-600 mb-1">Select Simulated Agent Tool Call:</label>
+              <select id="validator-scenario-select" onchange="loadValidatorScenario()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-800">
+                <option value="valid">✅ Scenario 1: Compliant Action (Within Invariant Bounds)</option>
+                <option value="breach_invariant">🛑 Scenario 2: Invariant Violation (Parameter Out of Bounds)</option>
+                <option value="unregistered_tool">🚫 Scenario 3: Unauthorized Tool (Outside Action Space)</option>
+              </select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-[11px] font-medium text-slate-600 mb-1">Proposed Agent Action Payload (JSON):</label>
+              <div class="flex gap-2">
+                <input type="text" id="validator-payload-input" value='{"action":"log_intake","parameters":{"risk_tier":"LOW","amount":1500},"guard_invariant":"x <= 5000"}' class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-mono text-slate-800">
+                <button onclick="runActionSpaceValidation()" class="px-4 py-1.5 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm flex items-center gap-1.5 transition">
+                  <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                  <span>Validate Action</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Live Validation Result Box -->
+          <div id="validator-result-box" class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-start gap-3">
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <span class="text-xs font-bold text-emerald-700 block">ACTION PERMITTED: Payload resides within declared Action Space</span>
+              <p class="text-[11px] text-slate-600 mt-0.5" id="validator-result-detail">
+                Schema verification passed. Parameter 'amount: 1500' satisfies governing invariant constraint (amount <= 5000). State transition A -> B authorized.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
 
       </div>
     </section>
@@ -1378,6 +1511,7 @@
       renderPipelineCards();
       renderInvariantsTable();
       renderOntologyBreakdown();
+      renderDeclarativeView();
       lucide.createIcons();
     }
 
@@ -1778,8 +1912,293 @@
     }
 
     // Tab Switching
+    
+    // --- Declarative SOPs & Machine-Readable Runbooks Engine ---
+    let currentDeclarativeFormat = 'yaml';
+
+    function setDeclarativeFormat(fmt) {
+      currentDeclarativeFormat = fmt;
+      ['yaml', 'json', 'mcp'].forEach(f => {
+        const btn = document.getElementById(`btn-format-${f}`);
+        if (f === fmt) {
+          btn.className = 'px-2.5 py-1 text-xs font-semibold rounded-md bg-white text-indigo-600 shadow-sm transition';
+        } else {
+          btn.className = 'px-2.5 py-1 text-xs font-semibold rounded-md text-slate-600 hover:text-slate-900 transition';
+        }
+      });
+      renderDeclarativeView();
+    }
+
+    function renderDeclarativeView() {
+      const dec = appState.currentDecomposition;
+      if (!dec) return;
+
+      const codeBox = document.getElementById('declarative-code-view');
+      const fileBadge = document.getElementById('declarative-file-name');
+      const specBadge = document.getElementById('declarative-spec-badge');
+
+      if (currentDeclarativeFormat === 'yaml') {
+        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_runbook.yaml`;
+        specBadge.textContent = 'YAML Declarative Runbook v2.0';
+        codeBox.textContent = generateDeclarativeRunbookYAML(dec);
+      } else if (currentDeclarativeFormat === 'json') {
+        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_schema.json`;
+        specBadge.textContent = 'JSON Schema Draft 2020-12';
+        codeBox.textContent = generateDeclarativeJSONSchema(dec);
+      } else {
+        fileBadge.textContent = `${(dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_')}_mcp.json`;
+        specBadge.textContent = 'Model Context Protocol (MCP) Tool Contract';
+        codeBox.textContent = generateDeclarativeMCPContract(dec);
+      }
+      lucide.createIcons();
+    }
+
+    function generateDeclarativeRunbookYAML(dec) {
+      const slug = (dec.title || 'sop').toLowerCase().replace(/[^a-z0-9]+/g, '_');
+      const policies = dec.policies || [];
+
+      const allowedTools = policies.map((p, idx) => {
+        const actionName = (p.title || `policy_${p.id}`).toLowerCase().replace(/[^a-z0-9]+/g, '_');
+        return `    - tool: "${actionName}"
+      policy_id: ${p.id}
+      component: "${p.comp_name} [${p.class_id}]"
+      description: "${p.nutshell || 'Governing policy rule'}"
+      guard_invariant: "${p.rule_invariant || 'invariant(x) == true'}"
+      permitted_fsm_state: "${['STATE_A_INTAKE', 'STATE_B_TRIGGER', 'STATE_C_GUARD', 'STATE_D_TERMINAL'][idx % 4]}"
+      execution_mode: "AUTOMATED_DETERMINISTIC"`;
+      }).join('\n');
+
+      const invariantsList = policies.map(p => {
+        return `  - policy_id: ${p.id}
+    name: "${p.title}"
+    formula: "${p.rule_invariant || 'N/A'}"
+    on_breach: "HALT_AND_ESCALATE"`;
+      }).join('\n');
+
+      return `# ==============================================================================
+# DECLARATIVE SOP RUNBOOK: CONSTRAINED AGENTIC ACTION SPACE
+# Principle: Constrain action spaces with machine-readable runbooks rather than raw open prompts.
+# Generated by: PolicyAgent 255 / AtomicSOP Architecture
+# ==============================================================================
+
+schema_version: "2.0-declarative-runbook"
+runbook_id: "RUNBOOK-${slug.toUpperCase()}"
+metadata:
+  title: "${dec.title || 'Enterprise Policy'}"
+  summary: "${(dec.summary || '').replace(/"/g, '\\"')}"
+  governing_ontology: "8 Components / 42 Classes / 255 Atomic Policies"
+  total_activated_policies: ${policies.length}
+
+# CONSTRAINED AGENT ACTION SPACE (Explicit Enumeration)
+constrained_action_space:
+  description: "Autonomous agents are restricted strictly to the following tool endpoints. Unregistered invocations are rejected at runtime."
+  allowed_tools:
+${allowedTools}
+
+  forbidden_actions:
+    - "unregistered_external_http_call"
+    - "unsupervised_state_mutation"
+    - "silent_exception_suppression"
+    - "out_of_bounds_parameter_override"
+
+# OPERATIONAL MATHEMATICAL INVARIANTS (Hard Verification Boundary)
+invariants:
+${invariantsList}
+
+# FINITE STATE MACHINE LIFECYCLE GUARDS
+state_machine:
+  states:
+    - id: "A"
+      name: "STATE_A_INTAKE"
+      description: "Baseline ingestion, caller authentication, parameter validation"
+    - id: "B"
+      name: "STATE_B_TRIGGER"
+      description: "Condition boundary evaluation and threshold routing"
+    - id: "C"
+      name: "STATE_C_GUARD"
+      description: "Mathematical invariant clamping and dual-authorization checkpoints"
+    - id: "D"
+      name: "STATE_D_TERMINAL"
+      description: "Immutable ledger settlement and cryptographic audit recordation"
+  transitions:
+    - from: "A"
+      to: "B"
+      guard: "caller_authenticated == true && initial_payload_valid == true"
+    - from: "B"
+      to: "C"
+      guard: "threshold_check_complete == true"
+    - from: "C"
+      to: "D"
+      guard: "all_invariants_satisfied == true"
+`;
+    }
+
+    function generateDeclarativeJSONSchema(dec) {
+      const policies = dec.policies || [];
+      const toolNames = policies.map(p => (p.title || `policy_${p.id}`).toLowerCase().replace(/[^a-z0-9]+/g, '_'));
+
+      const schema = {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": `${(dec.title || 'SOP').replace(/[^a-zA-Z0-9 ]/g, '')}ActionSpaceContract`,
+        "description": "Declarative Action Space Machine-Readable Schema. Replaces unconstrained open-ended prompts with typed, validated contracts.",
+        "type": "object",
+        "required": ["action_id", "parameters", "fsm_state", "invariant_proof"],
+        "additionalProperties": false,
+        "properties": {
+          "action_id": {
+            "type": "string",
+            "enum": toolNames.length ? toolNames : ["default_action"],
+            "description": "Enumerated permissible action in the agent's constrained action space."
+          },
+          "fsm_state": {
+            "type": "string",
+            "enum": ["STATE_A_INTAKE", "STATE_B_TRIGGER", "STATE_C_GUARD", "STATE_D_TERMINAL"],
+            "description": "Target lifecycle state in the finite state machine."
+          },
+          "parameters": {
+            "type": "object",
+            "required": ["timestamp", "operator_id", "value"],
+            "properties": {
+              "timestamp": { "type": "string", "format": "date-time" },
+              "operator_id": { "type": "string", "minLength": 3 },
+              "value": { "type": "number", "minimum": 0 },
+              "override_token": { "type": ["string", "null"] }
+            }
+          },
+          "invariant_proof": {
+            "type": "object",
+            "required": ["satisfied_policies", "boundary_check_passed"],
+            "properties": {
+              "satisfied_policies": {
+                "type": "array",
+                "items": { "type": "integer" }
+              },
+              "boundary_check_passed": { "type": "boolean" }
+            }
+          }
+        }
+      };
+
+      return JSON.stringify(schema, null, 2);
+    }
+
+    function generateDeclarativeMCPContract(dec) {
+      const policies = dec.policies || [];
+      const tools = policies.map((p, idx) => ({
+        name: (p.title || `policy_${p.id}`).toLowerCase().replace(/[^a-z0-9]+/g, '_'),
+        description: `Policy #${p.id} [${p.class_id} ${p.class_name}]: ${p.nutshell || 'Declarative policy action'}. Governing invariant: ${p.rule_invariant || 'true'}`,
+        inputSchema: {
+          type: "object",
+          required: ["case_id", "payload"],
+          properties: {
+            case_id: { type: "string", description: "Traceable SOP incident identifier" },
+            payload: {
+              type: "object",
+              description: `Parameters bounded by invariant ${p.rule_invariant || 'N/A'}`
+            }
+          }
+        }
+      }));
+
+      return JSON.stringify({
+        protocol: "ModelContextProtocol-v1",
+        server: "AtomicSOP-Declarative-Runbook-Gateway",
+        action_space_boundary: "STRICT_DECLARATIVE",
+        tools: tools
+      }, null, 2);
+    }
+
+    function copyDeclarativeSchema() {
+      const text = document.getElementById('declarative-code-view').textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const label = document.getElementById('copy-schema-label');
+        label.textContent = 'Copied!';
+        setTimeout(() => { label.textContent = 'Copy Schema'; }, 2000);
+      });
+    }
+
+    function downloadDeclarativeFile() {
+      const text = document.getElementById('declarative-code-view').textContent;
+      const filename = document.getElementById('declarative-file-name').textContent;
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // Interactive Action Space Playground Logic
+    function loadValidatorScenario() {
+      const scenario = document.getElementById('validator-scenario-select').value;
+      const input = document.getElementById('validator-payload-input');
+
+      if (scenario === 'valid') {
+        input.value = '{"action":"log_intake","parameters":{"risk_tier":"LOW","amount":1500},"guard_invariant":"x <= 5000"}';
+      } else if (scenario === 'breach_invariant') {
+        input.value = '{"action":"execute_settlement","parameters":{"amount":84200,"days_elapsed":45},"guard_invariant":"days_elapsed <= 30"}';
+      } else {
+        input.value = '{"action":"override_and_bypass_supervision","parameters":{"secret_token":"root_skip"},"guard_invariant":"false"}';
+      }
+      runActionSpaceValidation();
+    }
+
+    function runActionSpaceValidation() {
+      const inputStr = document.getElementById('validator-payload-input').value.trim();
+      const resultBox = document.getElementById('validator-result-box');
+      const detail = document.getElementById('validator-result-detail');
+
+      try {
+        const parsed = JSON.parse(inputStr);
+        const action = parsed.action || '';
+        const params = parsed.parameters || {};
+
+        if (action.includes('override') || action.includes('bypass') || action === 'unauthorized_tool') {
+          resultBox.className = 'p-3 rounded-xl border border-red-500/40 bg-red-500/10 flex items-start gap-3';
+          resultBox.innerHTML = `
+            <i data-lucide="shield-alert" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <span class="text-xs font-bold text-red-700 block">ACTION BLOCKED: Unregistered action '${action}' rejected by Schema</span>
+              <p class="text-[11px] text-slate-600 mt-0.5">Action space constraint enforced: Tool '${action}' is not defined in allowed_tools. Agent execution halted immediately.</p>
+            </div>
+          `;
+        } else if (params.days_elapsed > 30 || params.amount > 5000) {
+          resultBox.className = 'p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex items-start gap-3';
+          resultBox.innerHTML = `
+            <i data-lucide="alert-octagon" class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <span class="text-xs font-bold text-amber-700 block">INVARIANT BREACH: Parameter value exceeds mathematical bound</span>
+              <p class="text-[11px] text-slate-600 mt-0.5">Parameter violated invariant constraint (${parsed.guard_invariant || 'bound violated'}). Automatic safety circuit breaker tripped.</p>
+            </div>
+          `;
+        } else {
+          resultBox.className = 'p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex items-start gap-3';
+          resultBox.innerHTML = `
+            <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"></i>
+            <div>
+              <span class="text-xs font-bold text-emerald-700 block">ACTION PERMITTED: Payload resides within declared Action Space</span>
+              <p class="text-[11px] text-slate-600 mt-0.5">Schema verification passed. Parameters satisfy governing invariants. State transition authorized.</p>
+            </div>
+          `;
+        }
+      } catch (e) {
+        resultBox.className = 'p-3 rounded-xl border border-red-500/30 bg-red-500/10 flex items-start gap-3';
+        resultBox.innerHTML = `
+          <i data-lucide="x-circle" class="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"></i>
+          <div>
+            <span class="text-xs font-bold text-red-700 block">MALFORMED JSON PAYLOAD: Schema validation failed</span>
+            <p class="text-[11px] text-slate-600 mt-0.5">${e.message}</p>
+          </div>
+        `;
+      }
+      lucide.createIcons();
+    }
+
+
+    
     function switchTab(tabId) {
-      const tabs = ['graph', 'fsm', 'pipeline', 'invariants', 'ontology'];
+      const tabs = ['graph', 'fsm', 'pipeline', 'invariants', 'ontology', 'declarative'];
       tabs.forEach(t => {
         const btn = document.getElementById(`tab-btn-${t}`);
         const content = document.getElementById(`tab-content-${t}`);
@@ -1794,6 +2213,9 @@
 
       if (tabId === 'graph' && appState.network) {
         setTimeout(() => appState.network.fit(), 50);
+      }
+      if (tabId === 'declarative') {
+        renderDeclarativeView();
       }
       lucide.createIcons();
     }

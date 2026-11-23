@@ -63,6 +63,25 @@ Complex Real-World SOP ──► [WebLLM / Groq Decomposer] ──► Sub-Graph 
 
 ---
 
+
+---
+
+## 📜 Declarative SOPs: Constraining Action Spaces with Machine-Readable Runbooks
+
+> **"Constrain action spaces with machine-readable runbooks (YAML/JSON schemas) rather than raw open prompts."**
+
+Traditional agentic workflows rely on open-ended prose prompts, which suffer from **stochastic drift, parameter hallucinations, and bypassed authorization gates**. 
+
+AtomicSOP introduces **Declarative SOP Runbooks**:
+1. **Explicit Action Space Enumeration**:
+   Agents are strictly restricted to an allowed list of tool calls (`allowed_tools`) derived from the 255 atomic policy definitions. Unregistered tool invocations or arbitrary code execution calls are rejected at schema validation time.
+2. **Machine-Readable Contracts (YAML & JSON Schema Draft 2020-12)**:
+   Every parameter domain (`minimum`, `maximum`, `enum`, `required`), precondition check, and postcondition proof is formally defined for seamless integration with **OpenAI Function Calling**, **Claude Tool Use**, and the **Model Context Protocol (MCP)**.
+3. **Hard Mathematical Invariant Bounds**:
+   Operational policies enforce non-negotiable inequalities ($P_{floor} \ge P^*$, $\sum Duty \le 60$, $T_{excursion} \le 15\text{m}$) directly in the agent's parameter validation layer.
+4. **Interactive Action Space Validator Bench**:
+   Includes an in-browser playground to inject compliant or adversarial payloads and test real-time gate responses (`ACTION PERMITTED`, `INVARIANT BREACH`, or `ACTION BLOCKED`).
+
 ## 🏛️ The 8-Component Policy Making Ontology
 
 | Component | Class Count | Policy Range | Core Operational Focus |
