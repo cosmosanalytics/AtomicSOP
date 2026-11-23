@@ -362,38 +362,38 @@
       
       <!-- Tabs Navigation Bar -->
       <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-1.5 shadow-xl flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-1">
-          <button onclick="switchTab('graph')" id="tab-btn-graph" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition">
+        <div class="flex items-center gap-1 overflow-x-auto max-w-full pb-1 scrollbar-none">
+          <button onclick="switchTab('graph')" id="tab-btn-graph" class="px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="network" class="w-3.5 h-3.5"></i>
             <span>Knowledge Graph</span>
           </button>
           
-          <button onclick="switchTab('fsm')" id="tab-btn-fsm" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('fsm')" id="tab-btn-fsm" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
             <span>FSM Execution Engine</span>
           </button>
 
-          <button onclick="switchTab('pipeline')" id="tab-btn-pipeline" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('pipeline')" id="tab-btn-pipeline" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="layers" class="w-3.5 h-3.5"></i>
             <span>Atomic Pipeline (<span id="pipeline-count-badge">0</span>)</span>
           </button>
 
-          <button onclick="switchTab('invariants')" id="tab-btn-invariants" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('invariants')" id="tab-btn-invariants" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
             <span>Formal Invariants</span>
           </button>
 
-          <button onclick="switchTab('ontology')" id="tab-btn-ontology" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('ontology')" id="tab-btn-ontology" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i>
             <span>Ontology Distribution</span>
           </button>
 
-          <button onclick="switchTab('declarative')" id="tab-btn-declarative" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('declarative')" id="tab-btn-declarative" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="file-code-2" class="w-3.5 h-3.5 text-indigo-500"></i>
             <span>Declarative Runbooks</span>
           </button>
 
-          <button onclick="switchTab('redteam')" id="tab-btn-redteam" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition">
+          <button onclick="switchTab('redteam')" id="tab-btn-redteam" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-rose-500"></i>
             <span>Eval & Red-Teaming Harness</span>
           </button>
@@ -2638,10 +2638,10 @@ state_machine:
         const content = document.getElementById(`tab-content-${t}`);
         if (!btn || !content) return;
         if (t === tabId) {
-          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition';
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-300 border border-amber-500/30 flex items-center gap-1.5 transition whitespace-nowrap shrink-0';
           content.classList.remove('hidden');
         } else {
-          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition';
+          btn.className = 'px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0';
           content.classList.add('hidden');
         }
       });
