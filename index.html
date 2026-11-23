@@ -1407,8 +1407,6 @@
       const isLight = document.body.classList.contains('light-theme');
       const nodeBg = isLight ? '#ffffff' : '#0f172a';
       const nodeFontColor = isLight ? '#0f172a' : '#f8fafc';
-      const entityBg = isLight ? '#f1f5f9' : '#070b14';
-      const entityFontColor = isLight ? '#1e293b' : '#cbd5e1';
 
       dec.policies.forEach((p, pIdx) => {
         const pColor = compColors[p.comp_id] || '#f59e0b';
@@ -1417,7 +1415,8 @@
         if (!addedNodeIds.has(pNodeId)) {
           nodes.push({
             id: pNodeId,
-            label: `#${p.id} ${p.title}\n("${p.law_name}")`,
+            label: `#${p.id} ${p.title}
+("${p.law_name}")`,
             shape: 'box',
             margin: 10,
             color: {
@@ -1427,7 +1426,7 @@
             },
             font: { color: nodeFontColor, size: 12, face: 'monospace', bold: true },
             borderWidth: 2.5,
-            shadow: true,
+            shadow: isLight ? { enabled: true, color: 'rgba(0,0,0,0.06)', size: 4, x: 1, y: 1 } : true,
             policyData: p
           });
           addedNodeIds.add(pNodeId);
@@ -1435,42 +1434,72 @@
 
         if (pIdx > 0) {
           const prevPolicy = dec.policies[pIdx - 1];
+          const edgeLineColor = isLight ? '#94a3b8' : '#64748b';
+          const edgeLabelColor = isLight ? '#334155' : '#94a3b8';
           edges.push({
             from: `policy_${prevPolicy.id}`,
             to: pNodeId,
             label: `triggers [${p.class_id}]`,
             arrows: 'to',
-            color: { color: '#64748b', highlight: '#f59e0b' },
-            font: { size: 9, color: '#94a3b8', strokeWidth: 0, align: 'horizontal' },
+            color: { color: edgeLineColor, highlight: '#f59e0b' },
+            font: { size: 9, color: edgeLabelColor, strokeWidth: 0, align: 'horizontal' },
             smooth: { type: 'cubicBezier', roundness: 0.2 }
           });
         }
 
+        // End / leaf entity nodes
         if (p.kg && p.kg.nodes) {
           p.kg.nodes.slice(1, 4).forEach((kn, knIdx) => {
             const knId = `kg_${p.id}_${kn.id}`;
             if (!addedNodeIds.has(knId)) {
+              const isTrigger = kn.type === 'trigger';
+              const isOutcome = kn.type === 'outcome';
+
+              // Pure Light Mode vs Dark Mode colors for end nodes
+              let endNodeBg, endNodeBorder, endNodeFontColor;
+              if (isLight) {
+                // Crisp light pastels with dark readable typography:
+                endNodeBg = isTrigger ? '#f5f3ff' : (isOutcome ? '#ecfdf5' : '#f0f9ff');
+                endNodeBorder = isTrigger ? '#7c3aed' : (isOutcome ? '#059669' : '#0284c7');
+                endNodeFontColor = '#0f172a'; // NEVER dark pill / NEVER white text
+              } else {
+                endNodeBg = '#070b14';
+                endNodeBorder = isTrigger ? '#8b5cf6' : (isOutcome ? '#10b981' : '#38bdf8');
+                endNodeFontColor = '#cbd5e1';
+              }
+
               nodes.push({
                 id: knId,
                 label: kn.label,
                 shape: 'ellipse',
                 color: {
-                  background: '#070b14',
-                  border: kn.type === 'trigger' ? '#8b5cf6' : (kn.type === 'outcome' ? '#10b981' : '#38bdf8'),
-                  highlight: { background: '#1e293b', border: '#ffffff' }
+                  background: endNodeBg,
+                  border: endNodeBorder,
+                  highlight: { background: isLight ? '#ffffff' : '#1e293b', border: '#f59e0b' }
                 },
-                font: { color: '#cbd5e1', size: 10, face: 'sans-serif' },
-                borderWidth: 1.5
+                font: { 
+                  color: endNodeFontColor, 
+                  size: 10, 
+                  face: 'sans-serif', 
+                  bold: isLight 
+                },
+                borderWidth: isLight ? 2 : 1.5,
+                shadow: isLight ? { enabled: true, color: 'rgba(0,0,0,0.05)', size: 3, x: 1, y: 1 } : false
               });
               addedNodeIds.add(knId);
+
+              const edgeColor = knIdx === 0 
+                ? (isLight ? '#059669' : '#10b981') 
+                : (isLight ? '#dc2626' : '#ef4444');
+              const edgeFontColor = isLight ? '#334155' : '#64748b';
 
               edges.push({
                 from: pNodeId,
                 to: knId,
                 label: knIdx === 0 ? 'governs (+)' : 'effects (-)',
                 arrows: 'to',
-                color: { color: knIdx === 0 ? '#10b981' : '#ef4444' },
-                font: { size: 8, color: '#64748b', strokeWidth: 0 },
+                color: { color: edgeColor },
+                font: { size: 8, color: edgeFontColor, strokeWidth: 0 },
                 dashes: true
               });
             }
