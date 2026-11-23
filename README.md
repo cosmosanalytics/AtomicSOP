@@ -1,163 +1,114 @@
-# AtomicSOP: SOP-to-PolicyMap Knowledge Graph & Finite State Machine Compiler
+# AtomicSOP: Neural Policy Decomposer & Ontology-Driven State-Space Compiler
 
-> **Decomposing complex, messy, ambiguous Standard Operating Procedures (SOPs) into provable invariant combinations of the 100 PolicyMap atomic laws.**
+> **Decompose complex, messy, ambiguous real-world policies and SOPs from across the Internet into provable invariant compositions of the 255 Atomic Policies across the 8-Component Policy Making Ontology.**
 
-[![GitHub Pages](https://img.shields.io/badge/Demo-GitHub%20Pages-brightgreen)](https://cosmosanalytics.github.io/AtomicSOP/)
-[![Inference](https://img.shields.io/badge/Inference-Groq%20LPU%20%7C%20WebLLM%20WebGPU%20%7C%20Instant-orange)]()
-[![Catalog](https://img.shields.io/badge/Catalog-100%20Atomic%20PolicyMaps-blue)]()
-[![Model](https://img.shields.io/badge/Architecture-Fully--Observed%20State--Space-indigo)]()
+[![GitHub Pages](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen)](https://cosmosanalytics.github.io/AtomicSOP/)
+[![Inference](https://img.shields.io/badge/Engines-WebLLM%20WebGPU%20%7C%20Groq%20LPU%20%7C%20Instant-orange)]()
+[![Ontology](https://img.shields.io/badge/Ontology-8%20Components%20%7C%2042%20Classes-blue)]()
+[![Catalog](https://img.shields.io/badge/Catalog-255%20Atomic%20Policies-indigo)]()
+[![Zero Backend](https://img.shields.io/badge/Architecture-100%25%20Single--File%20Client--Side-emerald)]()
+
+---
+
+## 🌐 Live Application & GitHub Pages Setup
+
+The application is deployed directly via **GitHub Pages** from the root `index.html` file in this repository:
+👉 **[https://cosmosanalytics.github.io/AtomicSOP/](https://cosmosanalytics.github.io/AtomicSOP/)**
+
+> [!IMPORTANT]
+> **If you see a `404 - There isn't a GitHub Pages site here`:**
+> 1. In this GitHub repository, navigate to **Settings** > **Pages** (in the left sidebar).
+> 2. Under **Build and deployment** > **Source**, choose **Deploy from a branch**.
+> 3. Under **Branch**, select `main` and folder `/ (root)`, then click **Save**.
+> 4. GitHub will deploy the site in 30–60 seconds at `https://cosmosanalytics.github.io/AtomicSOP/`.
+> *(Note: The URL must include `/AtomicSOP/`; visiting `cosmosanalytics.github.io` without the repository name returns a 404).*
 
 ---
 
 ## 💡 Overview
 
-Enterprises are built on complex Standard Operating Procedures (SOPs) that govern clinical triage, cold-chain logistics, material requirements planning (MRP), energy dispatch, and consumer warranties. In traditional systems, these SOPs are either buried in static PDF manuals or hardcoded in brittle application scripts.
+Enterprises and regulatory institutions operate on complex, dense policies: aviation rest protocols, data privacy mandates, hospital triage guidelines, financial reserve limits, and state-space supply chain planning models. In traditional engineering, these procedures are either buried in static manuals or brittle custom code.
 
-**AtomicSOP** treats enterprise SOPs as compositions of discrete, reusable, mathematically bounded **atomic policy laws** (from the **100 PolicyMap** catalog). It acts as an autonomous compilation agent that:
-1. **Decomposes** unstructured SOP narratives into constituent atomic policy laws.
-2. **Synthesizes a Composite Knowledge Graph** mapping causal drivers, positive ($+$) and negative ($-$) feedback loops, and governing invariant rules.
-3. **Generates an Executable Composite Finite State Machine (FSM)** with discrete lifecycle states, transition triggers, guard expressions, and operational actions.
-4. **Executes Interactive In-Browser Simulation** enabling step-by-step verification, live payload inspection, and boundary breach injections.
-5. **Formally Audits** the composite model for terminal reachability, deadlock freedom, and invariant contradictions.
-6. **Exports Production Specifications** to **JSON Schema**, **OpenCypher (Neo4j)**, **SCXML / XState**, and **Mermaid diagrams**.
+**AtomicSOP** treats every complex real-world policy as a mathematical composition of discrete, bounded **atomic policy laws** defined in the **Ontology of Policy Making**.
 
----
-
-## 🏛️ System Architecture
-
-```mermaid
-flowchart TD
-    subgraph INTAKE["1. Ingestion"]
-        SOP["Enterprise SOP Narrative\n(Contractual Clauses, SLAs, Thresholds)"]
-    end
-
-    subgraph ENGINE["2. Agentic Compiler Engine"]
-        RT{"Inference Engine"}
-        RT -->|"Cloud Fast (<500ms)"| GROQ["⚡ Groq LPU\n(Llama-3.3-70B / Llama-3.1-8B)"]
-        RT -->|"In-Browser WebGPU"| WEBGPU["🌐 WebLLM\n(Qwen2.5-1.5B / Llama-3.2-1B)"]
-        RT -->|"Zero-Latency Offline"| INSTANT["🎯 Instant Semantic Engine\n(Deterministic Heuristic Matcher)"]
-    end
-
-    subgraph CATALOG["3. Knowledge Base"]
-        P100["100 Atomic PolicyMaps\n• In a Nutshell\n• The Picture\n• Knowledge Graph (+/-)\n• 4-State Machine (A→B→C→D)\n• Governing Invariant"]
-    end
-
-    subgraph SYNTHESIS["4. Graph & State Synthesis"]
-        CKG["Composite Knowledge Graph\n(Vis.js Causal Graph)"]
-        CFSM["Composite Finite State Machine\n(Guard Expressions & Actions)"]
-    end
-
-    subgraph VERIFY["5. Execution & Verification"]
-        COCKPIT["🕹️ Interactive Simulation Cockpit\n• Step Transitions\n• Boundary Breach Injection\n• Live Payload Form"]
-        AUDIT["🛡️ Formal Graph Audit\n• Deadlock Detection\n• Reachability Theorem\n• Contradiction Checker"]
-        EXPORT["💾 Multi-Format Spec Export\n• JSON Schema\n• Neo4j OpenCypher\n• SCXML / XState\n• Mermaid"]
-    end
-
-    SOP --> ENGINE
-    ENGINE <--> CATALOG
-    ENGINE --> SYNTHESIS
-    CKG --> COCKPIT
-    CFSM --> COCKPIT
-    COCKPIT --> AUDIT
-    COCKPIT --> EXPORT
+```
+Complex Real-World SOP ──► [WebLLM / Groq Decomposer] ──► Sub-Graph Composition ──► Executable FSM + Invariants
 ```
 
+### Key Capabilities:
+1. **Full 255-Policy Ontology Database**: All 255 policies across the 8 core components and 42 classes (from *Goals & Targets* to *Enforcement & Review*), complete with:
+   - "In a Nutshell" operational definitions
+   - Governing mathematical invariant equations ($P_{floor} \ge P^*$, $\sum Duty \le 60$, etc.)
+   - 4-State Discrete Finite State Machines ($A \rightarrow B \rightarrow C \rightarrow D$)
+   - Causal feedback graphs with positive ($+$) and negative ($-$) relations
+   - "Spot It in the Wild" real-world applications & one-line takeaways
+2. **Three Flexible AI Engines**:
+   - 🌐 **WebLLM / WebGPU**: 100% private, zero-backend, client-side neural decomposition in Chrome/Edge using `@mlc-ai/web-llm` (`Qwen2.5-1.5B`, `Llama-3.2-1B`, etc.).
+   - ⚡ **Groq LPU**: Ultra-fast cloud inference at 500+ tokens/sec using `llama-3.3-70b-versatile` or `llama-3.1-8b-instant`.
+   - 🎯 **Instant Deterministic Engine**: Instant semantic trace matcher with zero latency and offline availability.
+3. **8 Built-in Real-World Internet Presets**:
+   - **Amazon Returns**: 30-day window, restocking deductions, proof of purchase, exception triage.
+   - **EU GDPR Article 17**: Right to erasure, verification grace periods, downstream notification cascade.
+   - **FAA FAR Part 117**: Flight duty limits, circadian rest periods, cumulative flight hour caps.
+   - **Hospital EMTALA Triage**: Emergency medical screening, stabilization mandate, transfer authorization.
+   - **Enterprise Cloud Procurement**: Dual authorization thresholds, spend caps, segregation of duties.
+   - **California Tenant Protection (AB 1482)**: 5% + CPI rent increase limits, just-cause eviction notices.
+   - **Dr. Zhaoyang Wan's S&OP State-Space World Model**: Dual-pipeline fully-observed inventory balancing.
+   - **Federal Reserve Reg D & E**: Electronic transfer caps, 60-day fraud liability, provisional credit.
+4. **Visual & Formal Verification**:
+   - Interactive **Vis.js Knowledge Graph** showing policy-to-entity causal relationships.
+   - Steppable **Discrete 4-State FSM** with transition triggers and guard validations.
+   - **Mathematical Invariant Audit Matrix** checking boundary bounds.
+   - Interactive **Ontology Catalog Modal** with real-time keyword search and component filtering.
+
 ---
 
-## 📋 Preloaded Enterprise Sample SOPs
+## 🏛️ The 8-Component Policy Making Ontology
 
-### 1. The World Model: Fully-Observed State-Space Planning (Zhaoyang Wan)
-*Featured premier SOP based on the eleven-stage state-space architecture paper.*
-* **Equations & Stages**:
-  * **Aggregate**: $A_{agg} = G \cdot A$ (*Policy #81 The "Roll-Up" Law*)
-  * **Data Cleaning**: $A_{clean} = \text{Clip}(\text{GapFill}(A_{agg}), \text{Bounds})$ (*Policy #83 Gap Fill & #84 Outlier Clipping*)
-  * **Segmentation & Rules**: $\text{Rule} = R(\text{ADI}, \text{CV}^2, \text{Trend}, \text{Season})$ (*Policy #85 Segmentation & #86 Rule Eligibility*)
-  * **Model Tournament**: $F_{agg} = F_{m^*}, m^* = \arg\min_m \text{WMAPE}_{bt}(m)$ (*Policy #87 Backtest Selection*)
-  * **Consensus**: $\text{Total}_{agg} = F_{agg} + \text{Adj}_{agg}$ (*Policy #88 Consensus Adjustment*)
-  * **Disaggregate**: $\text{Total} = \text{diag}(w) \cdot G^T \cdot \text{Total}_{agg}$ (*Policy #82 Disaggregation*)
-  * **Netting**: $\text{NettedDemand} = \text{Total} - \text{Backlog}$ (*Policy #89 Netting*)
-  * **Dependent Demand**: $\text{GrossReq} = \text{BOM} \cdot \text{NettedDemand}$ (*Policy #90 BOM Explosion*)
-  * **Firming**: $\text{PlannedOrder} = \text{ReLU}(\text{GrossReq} - \text{OnHand})$ (*Policy #91 Net Requirements*)
-  * **Capacity Check**: $\text{Utilization} = \text{Load} / \text{Capacity}$ (*Policy #92 Capacity Check*)
-  * **Buffer Sizing**: $\text{SafetyStock} = \text{diag}(\text{SLF}) \cdot \text{GrossReq}$ (*Policy #93 Safety Stock & #99 SLA Target*)
-  * **Tripwire Monitor & Routing**: $\text{Alert} = 1[\text{condition}], \text{Owner} = \text{AlertFired} \cdot \text{OwnerMap}$ (*Policy #94 & #95*)
-  * **Closed-Loop Foundation**: Deterministic consequence engine for feedback control (*Policy #100*).
-
-### 2. Cold-Chain Pharma Spoilage & Carrier Recovery SOP
-* **Constituent Policies**: **#94 Threshold alert** (IoT temp $>8^\circ\text{C}$ for 60 min) + **#95 Owner routing** (quarantine dispatch) + **#50 Replacement cost** (valuation) + **#20 Warranty** (minor loss $\le \$5\text{k}$) + **#7 Deductible** (carrier primary insurance) + **#51 Subrogation** (pursuit of 3rd-party refrigeration contractor) + **#30 Lemon law** (3-strikes vendor disqualification).
-
-### 3. Healthcare Inpatient Prior Auth & Out-of-Pocket Claims Adjudication SOP
-* **Constituent Policies**: **#53 Prior authorization** + **#52 In-network fence** + **#7 Deductible** + **#12 Copay vs coinsurance** + **#22 Out-of-pocket max** + **#79 Risk pooling**.
-
-### 4. Autonomous Multi-Echelon Supply Chain MRP Replenishment SOP
-* **Constituent Policies**: **#89 Netting** + **#90 BOM explosion** + **#91 Net requirements** + **#93 Safety stock** + **#96 Reorder point** + **#97 Lot sizing** + **#98 Lead time offset**.
-
-### 5. E-Commerce Multi-Tier Returns, Price Match & Loyalty SOP
-* **Constituent Policies**: **#32 Return window** (14/30 day countdown) + **#33 Price match** + **#43 BOGO** + **#74 Mail-in rebate** + **#80 Cooling-off period** + **#75 Points expiry**.
-
-### 6. Fintech Credit Card Grace Period, Revolving APR & Teaser Transfer SOP
-* **Constituent Policies**: **#25 Grace period** + **#18 Minimum payment** + **#62 Compound interest** + **#41 Late fee** + **#69 Balance transfer** + **#100 Feedback control**.
-
-### 7. Smart Grid Dynamic Time-of-Use & Solar Net Metering SOP
-* **Constituent Policies**: **#36 Time-of-use** + **#73 Net metering** + **#72 Inclining block rates** + **#92 Capacity check** + **#94 Threshold alert** + **#100 Feedback control**.
+| Component | Class Count | Policy Range | Core Operational Focus |
+| :--- | :---: | :---: | :--- |
+| **1. Goals & Targets** | 4 classes | Policies #1 – #28 | Floors, ceilings, quotas, milestones, output constraints |
+| **2. Actors & Authority** | 6 classes | Policies #29 – #58 | Delegation, segregation of duties, vetoes, escalation, approvals |
+| **3. Incentives & Pricing** | 7 classes | Policies #59 – #98 | Subsidies, penalties, dynamic fees, tiered rates, rebates |
+| **4. Risk & Household Money**| 4 classes | Policies #99 – #136 | Collateral, reserve buffers, indemnification, capital adequacy |
+| **5. Conditions & Triggers** | 5 classes | Policies #137 – #161| Threshold trips, circuit breakers, emergency overrides, triggers |
+| **6. Time & Sequence** | 6 classes | Policies #162 – #193| Grace periods, expirations, cool-downs, prerequisite DAG order |
+| **7. Flow & Allocation** | 5 classes | Policies #194 – #228| FIFO queues, quota rationing, bottlenecks, routing priority |
+| **8. Enforcement & Review** | 5 classes | Policies #229 – #255| Audits, dispute arbitration, clawbacks, compliance verification |
 
 ---
 
 ## 📸 Screenshots
 
-| View | Screenshot |
-| :--- | :--- |
-| **SOP Compiler Studio** | ![Compiler](screenshots/world_model_sop_compiler_view.png) |
-| **Composite Knowledge Graph** | ![Knowledge Graph](screenshots/world_model_knowledge_graph_view.png) |
-| **FSM Simulation Cockpit** | ![FSM Cockpit](screenshots/world_model_fsm_stepped_view.png) |
-| **100 Policies Catalog & Modal** | ![Catalog Modal](screenshots/sop_policy_catalog_modal.png) |
-| **Formal Invariant Audit** | ![Formal Audit](screenshots/world_model_formal_audit.png) |
-| **Specification & Code Export** | ![Spec Export](screenshots/world_model_spec_export.png) |
+| Composite Knowledge Graph | Steppable 4-State Machine |
+| :---: | :---: |
+| ![Knowledge Graph](screenshots/verified_255_graph.png) | ![FSM Stepper](screenshots/verified_255_fsm.png) |
+
+| Invariant Audit Matrix | 255-Policy Ontology Catalog |
+| :---: | :---: |
+| ![Invariants](screenshots/verified_255_invariants.png) | ![Catalog](screenshots/verified_255_ontology.png) |
 
 ---
 
-## ⚡ Execution Engines
+## 🚀 Getting Started
 
-1. **Instant Semantic Engine (Default)**:
-   * 0ms latency, zero external API keys, zero downloads.
-   * Runs locally in any web browser.
-2. **Groq LPU (Llama 3.3 70B Versatile)**:
-   * Fast cloud compilation (<500ms).
-   * Enter your Groq API key via the **API Key** button in the top navigation bar. Key is stored locally in your browser (`localStorage`).
-3. **WebLLM WebGPU**:
-   * Client-side private LLM execution powered by `@mlc-ai/web-llm`.
-   * Automatically detects `navigator.gpu` and streams weights directly to browser memory.
+### Option 1: Live in Browser
+Open **[https://cosmosanalytics.github.io/AtomicSOP/](https://cosmosanalytics.github.io/AtomicSOP/)** in any modern web browser (Chrome, Edge, Brave, Firefox, Safari).
 
----
-
-## 🚀 Quick Start
-
-### Running Locally
-No build step or Node.js environment required:
-1. Clone the repository:
-   ```bash
-   git clone git@github.com:cosmosanalytics/AtomicSOP.git
-   cd AtomicSOP
-   ```
-2. Open `index.html` in Chrome, Edge, Safari, or Firefox:
-   ```bash
-   # On Windows
-   start index.html
-
-   # On macOS
-   open index.html
-
-   # On Linux
-   xdg-open index.html
-   ```
-
-### Deploying to GitHub Pages
-1. Go to repository **Settings** &rarr; **Pages**.
-2. Under **Build and deployment**, set Source to **Deploy from a branch** (`main` / root `/`).
-3. Your live application will be available at `https://cosmosanalytics.github.io/AtomicSOP/`.
+### Option 2: Run Locally (Zero Server Required)
+Simply clone the repo and open `index.html` directly in your browser:
+```bash
+git clone https://github.com/cosmosanalytics/AtomicSOP.git
+cd AtomicSOP
+start index.html   # On Windows
+open index.html    # On macOS
+xdg-open index.html # On Linux
+```
 
 ---
 
-## 📄 License
+## 📄 License & Attribution
 
-MIT License. Open source and free for enterprise engineering, research, and educational modeling.
+- Built as part of the **AI Engineering State-Space Systems & PolicyMap Research**.
+- Features the **8-Component Ontology of Policy Making** and the **255 Atomic Policy Archetypes**.
+- Includes client-side neural acceleration powered by **WebLLM (@mlc-ai)** and **Groq LPU**.
