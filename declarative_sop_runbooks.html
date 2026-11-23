@@ -370,7 +370,7 @@
           
           <button onclick="switchTab('fsm')" id="tab-btn-fsm" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
             <i data-lucide="git-branch" class="w-3.5 h-3.5"></i>
-            <span>FSM Execution Engine</span>
+            <span>Workflow DAG & FSM Dataflow</span>
           </button>
 
           <button onclick="switchTab('pipeline')" id="tab-btn-pipeline" class="px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-slate-200 hover:bg-slate-800 flex items-center gap-1.5 transition whitespace-nowrap shrink-0">
@@ -449,104 +449,176 @@
           </div>
         </div>
 
-        <!-- Tab 2: Interactive FSM Execution Engine -->
-        <div id="tab-content-fsm" class="hidden flex-1 flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300">Composite Finite State Machine (FSM)</h3>
-              <p class="text-xs text-slate-400">Deterministic state transitions with operational transition guards</p>
+        <!-- Tab 2: Composite Workflow & FSM Dataflow Engine -->
+        <div id="tab-content-fsm" class="hidden flex-1 flex flex-col gap-4 overflow-y-auto max-h-[720px] pr-1">
+          
+          <!-- Architectural Clarity Banner (Addressing Sofus's Question) -->
+          <div class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-emerald-500/10 border border-amber-500/30 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400 flex-shrink-0 mt-0.5">
+                <i data-lucide="git-merge" class="w-5 h-5"></i>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                  <span class="text-xs font-mono font-bold uppercase tracking-wider text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">Operational Workflow Architecture</span>
+                  <span class="text-xs text-slate-400 font-medium">Stateful I/O Dataflow &bull; Transition Guards</span>
+                </div>
+                <h3 class="text-sm font-bold text-slate-100 leading-snug">
+                  How SOPs &amp; FSMs Fit Together: Macro-Workflow Orchestration + Atomic Invariant Guards
+                </h3>
+                <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+                  Real Standard Operating Procedures are not tiny isolated rules&mdash;they are <strong>stateful I/O pipelines</strong>. The <strong>Macro-FSM</strong> orchestrates the sequence of actions (<em>Get Information &rarr; Execute Tool &rarr; Branch on Result &rarr; Mutate State</em>). The <strong>255 Atomic Policy Laws</strong> serve as <strong>deterministic invariant guards on the transitions</strong>, guaranteeing that no hallucinated parameters, skipped approvals, or SLA breaches occur at any stage.
+                </p>
+              </div>
             </div>
-            
+
+            <!-- 3 Architecture Pillars Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3 pt-3 border-t border-slate-800">
+              <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5">
+                <span class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 mb-1">
+                  <i data-lucide="layers" class="w-3.5 h-3.5"></i> 1. Macro-SOP Workflow
+                </span>
+                <p class="text-[11px] text-slate-400 leading-normal">
+                  End-to-end multi-stage pipeline coordinating high-level business goals across roles and time.
+                </p>
+              </div>
+              <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5">
+                <span class="text-[11px] font-bold text-indigo-400 flex items-center gap-1.5 mb-1">
+                  <i data-lucide="activity" class="w-3.5 h-3.5"></i> 2. Stateful I/O Dataflow
+                </span>
+                <p class="text-[11px] text-slate-400 leading-normal">
+                  Each stage receives inputs, executes tools, produces outputs, and mutates a shared state context.
+                </p>
+              </div>
+              <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-2.5">
+                <span class="text-[11px] font-bold text-emerald-400 flex items-center gap-1.5 mb-1">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> 3. Atomic Invariant Guards
+                </span>
+                <p class="text-[11px] text-slate-400 leading-normal">
+                  255 formal policy laws intercept state transitions before commit: $P \le \text{bound}$ with 0% drift.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls Bar: Step Navigator & Playback -->
+          <div class="flex items-center justify-between gap-2 bg-slate-950/60 border border-slate-800 p-2.5 rounded-xl">
             <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                <i data-lucide="play-circle" class="w-4 h-4 text-amber-400"></i>
+                <span id="fsm-active-label">Stage 1 of 4: Medical Screening Mandate</span>
+              </span>
+              <span id="fsm-step-badge" class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">STATE S1 ACTIVE</span>
+            </div>
+
+            <div class="flex items-center gap-1.5">
               <button onclick="stepFSM(-1)" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1">
-                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev
+                <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i> Prev Stage
               </button>
               <button onclick="toggleFSMAutoPlay()" id="fsm-play-btn" class="px-3 py-1 text-xs rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 transition flex items-center gap-1.5 font-medium">
                 <i data-lucide="play" class="w-3.5 h-3.5"></i> Auto Step
               </button>
-              <button onclick="stepFSM(1)" class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1">
-                Next <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              <button onclick="stepFSM(1)" class="px-2.5 py-1 text-xs rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold transition flex items-center gap-1">
+                Next Stage <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
               </button>
-              <button onclick="resetFSM()" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition" title="Reset FSM">
+              <button onclick="resetFSM()" class="p-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition" title="Reset Workflow">
                 <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
               </button>
             </div>
           </div>
 
-          <!-- 4 Discrete State Machine Containers -->
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-3 mb-5" id="fsm-states-cards">
-            <!-- State A Card -->
-            <div id="fsm-card-A" class="bg-slate-950 border-2 border-amber-500 rounded-xl p-3.5 relative transition-all duration-300 shadow-lg shadow-amber-500/10">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 font-mono">STATE A</span>
-                <span id="fsm-pill-A" class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping"></span>
-              </div>
-              <h4 id="fsm-name-A" class="font-bold text-sm text-slate-100 truncate">INTAKE & BASELINE</h4>
-              <p id="fsm-desc-A" class="text-xs text-slate-400 mt-1 leading-relaxed">Initiation and parameter baseline.</p>
-              <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono" id="fsm-policies-A">
-                Active: Policies #1, #81
-              </div>
-            </div>
-
-            <!-- State B Card -->
-            <div id="fsm-card-B" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 relative transition-all duration-300 opacity-60">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">STATE B</span>
-                <span id="fsm-pill-B" class="w-2 h-2 rounded-full bg-slate-600"></span>
-              </div>
-              <h4 id="fsm-name-B" class="font-bold text-sm text-slate-200 truncate">TRIGGER & EVALUATION</h4>
-              <p id="fsm-desc-B" class="text-xs text-slate-400 mt-1 leading-relaxed">Condition testing and threshold checking.</p>
-              <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono" id="fsm-policies-B">
-                Active: Policies #84, #170
-              </div>
-            </div>
-
-            <!-- State C Card -->
-            <div id="fsm-card-C" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 relative transition-all duration-300 opacity-60">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">STATE C</span>
-                <span id="fsm-pill-C" class="w-2 h-2 rounded-full bg-slate-600"></span>
-              </div>
-              <h4 id="fsm-name-C" class="font-bold text-sm text-slate-200 truncate">GUARD & EXECUTION</h4>
-              <p id="fsm-desc-C" class="text-xs text-slate-400 mt-1 leading-relaxed">Constraint application and invariant check.</p>
-              <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono" id="fsm-policies-C">
-                Active: Policies #91, #181
-              </div>
-            </div>
-
-            <!-- State D Card -->
-            <div id="fsm-card-D" class="bg-slate-950 border border-slate-800 rounded-xl p-3.5 relative transition-all duration-300 opacity-60">
-              <div class="flex items-center justify-between mb-1.5">
-                <span class="text-xs font-extrabold px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">STATE D</span>
-                <span id="fsm-pill-D" class="w-2 h-2 rounded-full bg-slate-600"></span>
-              </div>
-              <h4 id="fsm-name-D" class="font-bold text-sm text-slate-200 truncate">SETTLED & AUDITED</h4>
-              <p id="fsm-desc-D" class="text-xs text-slate-400 mt-1 leading-relaxed">Terminal state, restitution and audit logging.</p>
-              <div class="mt-3 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 font-mono" id="fsm-policies-D">
-                Active: Policies #160, #252
-              </div>
-            </div>
+          <!-- 4 Discrete Operational Stage Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3" id="fsm-states-cards">
+            <!-- Dynamically populated from active SOP clauses -->
           </div>
 
-          <!-- Active Transition Narrative Box -->
-          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex-1">
-            <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                <i data-lucide="play-circle" class="w-4 h-4"></i>
-                <span id="fsm-active-label">Current Execution State: STATE A (INTAKE & BASELINE)</span>
-              </span>
-              <span class="text-xs text-slate-500 font-mono" id="fsm-step-counter">State 1 of 4</span>
-            </div>
-            <div id="fsm-state-narrative" class="text-xs text-slate-300 leading-relaxed space-y-2">
-              <p>The state machine initializes inputs and binds baseline operational variables. All external inputs are checked against domain types before triggering guards.</p>
-            </div>
+          <!-- Active Stage Transition Triad & I/O Dataflow Container -->
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col gap-3 shadow-lg">
             
-            <div class="mt-4 p-3 bg-slate-900/60 rounded-lg border border-slate-800">
-              <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">State Invariant Guard:</span>
-              <div id="fsm-active-invariant-math" class="text-xs font-mono text-amber-300">
-                <!-- KaTeX rendered formula -->
+            <div class="flex items-center justify-between border-b border-slate-800/80 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+                  <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+                  <span>Active Transition Triad (Input &rarr; Tool Call &rarr; Output &rarr; Invariant Guard)</span>
+                </span>
+              </div>
+              <span class="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20" id="fsm-transition-status">
+                Transition Authorized &bull; Guard Satisfied
+              </span>
+            </div>
+
+            <!-- The Transition Triad Grid (Input -> Tool -> Output) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              
+              <!-- Triad Column 1: Input Received -->
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5">
+                <div class="flex items-center justify-between text-[11px] font-bold text-blue-400">
+                  <span class="flex items-center gap-1"><i data-lucide="download" class="w-3.5 h-3.5"></i> 1. Input Ingested</span>
+                  <span class="font-mono text-[10px] text-slate-500" id="fsm-input-type">PAYLOAD</span>
+                </div>
+                <div class="bg-slate-950 rounded-lg p-2 font-mono text-[10.5px] text-blue-200/90 overflow-x-auto border border-slate-800" id="fsm-input-json">
+                  <!-- Ingested input JSON -->
+                </div>
+              </div>
+
+              <!-- Triad Column 2: Tool Action Executed -->
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5">
+                <div class="flex items-center justify-between text-[11px] font-bold text-amber-400">
+                  <span class="flex items-center gap-1"><i data-lucide="terminal" class="w-3.5 h-3.5"></i> 2. Action / Tool Called</span>
+                  <span class="font-mono text-[10px] text-slate-500">EXEC_RPC</span>
+                </div>
+                <div class="bg-slate-950 rounded-lg p-2 font-mono text-[10.5px] text-amber-200/90 overflow-x-auto border border-slate-800" id="fsm-action-code">
+                  <!-- Executed Tool Code -->
+                </div>
+              </div>
+
+              <!-- Triad Column 3: Output Delta Produced -->
+              <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3 flex flex-col gap-1.5">
+                <div class="flex items-center justify-between text-[11px] font-bold text-emerald-400">
+                  <span class="flex items-center gap-1"><i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> 3. Output Produced</span>
+                  <span class="font-mono text-[10px] text-slate-500">STATE_DELTA</span>
+                </div>
+                <div class="bg-slate-950 rounded-lg p-2 font-mono text-[10.5px] text-emerald-200/90 overflow-x-auto border border-slate-800" id="fsm-output-json">
+                  <!-- Output Delta JSON -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Transition Guard & Invariant Row -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
+              <div class="flex items-center gap-2 flex-1 min-w-[280px]">
+                <div class="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 flex-shrink-0">
+                  <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] uppercase font-mono tracking-wider text-slate-400 block">Governing Atomic Policy Law:</span>
+                  <span class="text-xs font-bold text-emerald-300 font-mono" id="fsm-governing-law">
+                    Policy #151 [8.2 Resilience]: Emergency Medical Screening SLA (elapsed &le; 15 min)
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] text-slate-400 font-mono">Transition Vector:</span>
+                <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-slate-950 border border-slate-800 text-slate-200" id="fsm-transition-vector">
+                  S1 &rarr; S2 (Authorized)
+                </span>
               </div>
             </div>
+
+            <!-- Live Stateful Context Accumulator (The Evolving Memory Object) -->
+            <div class="border-t border-slate-800/80 pt-3">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                  <i data-lucide="database" class="w-3.5 h-3.5 text-indigo-400"></i>
+                  <span>Live Stateful Context Accumulator (<code class="text-indigo-400 text-[11px]">state_context</code>)</span>
+                </span>
+                <span class="text-[10px] font-mono text-slate-500" id="fsm-context-key-count">3 Keys Accumulated</span>
+              </div>
+              <pre class="bg-slate-950 border border-slate-800 rounded-xl p-3 font-mono text-[11px] text-indigo-200/90 overflow-x-auto max-h-40 leading-relaxed" id="fsm-context-json"></pre>
+            </div>
+
           </div>
         </div>
 
@@ -1887,56 +1959,211 @@
       }
     }
 
-    // Tab 2: FSM Execution View & Stepper
-    function renderFSMView() {
-      const dec = appState.currentDecomposition;
-      if (!dec || !dec.policies.length) return;
-
-      const stateLabels = ['A', 'B', 'C', 'D'];
-      const current = appState.currentFSMStateIndex;
-
-      stateLabels.forEach((st, idx) => {
-        const card = document.getElementById(`fsm-card-${st}`);
-        const pill = document.getElementById(`fsm-pill-${st}`);
-        const activePolDiv = document.getElementById(`fsm-policies-${st}`);
-        const activeForState = dec.policies.filter((p, pIdx) => pIdx % 4 === idx);
-
-        activePolDiv.textContent = `Active: ${activeForState.map(p => '#' + p.id).join(', ') || 'Baseline'}`;
-
-        if (idx === current) {
-          card.className = 'bg-slate-950 border-2 border-amber-500 rounded-xl p-3.5 relative transition-all duration-300 shadow-lg shadow-amber-500/20 scale-[1.02]';
-          pill.className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping';
-        } else {
-          card.className = 'bg-slate-950 border border-slate-800 rounded-xl p-3.5 relative transition-all duration-300 opacity-60 hover:opacity-90';
-          pill.className = 'w-2 h-2 rounded-full bg-slate-600';
+    function getParsedSOPStages() {
+      const text = document.getElementById('policy-input') ? document.getElementById('policy-input').value : '';
+      const lines = text.split('\n');
+      const stages = [];
+      const stageRegex = /^\s*(\d+)[\.\)]\s*([^:\n]+)[:\-–]?\s*(.*)$/;
+      
+      lines.forEach(line => {
+        const match = line.match(stageRegex);
+        if (match) {
+          stages.push({
+            num: parseInt(match[1]),
+            title: match[2].trim(),
+            desc: match[3].trim()
+          });
         }
       });
 
-      const stateNames = [
-        "STATE A: INTAKE & BASELINE ENROLLMENT",
-        "STATE B: CONDITION & THRESHOLD TRIGGER",
-        "STATE C: OPERATIONAL INVARIANT GUARD",
-        "STATE D: TERMINAL SETTLEMENT & AUDIT"
-      ];
-      
-      const narratives = [
-        "System receives incoming transaction / claim / batch. Baseline parameters are cataloged and verified against initial eligibility rules.",
-        "Monitored threshold or condition line is evaluated. Operational alerts fire, routing the case to the appropriate actor or safety buffer.",
-        "Guards and mathematical constraints bind the state. Clamping, rate-limiting, and two-person checks prevent illegal state transitions.",
-        "Terminal resolution reached: payment disbursed, replacement shipped, or record sealed into immutable audit log."
-      ];
-
-      document.getElementById('fsm-active-label').textContent = `Current Execution State: ${stateNames[current]}`;
-      document.getElementById('fsm-step-counter').textContent = `State ${current + 1} of 4 (${stateLabels[current]})`;
-      document.getElementById('fsm-state-narrative').innerHTML = `<p>${narratives[current]}</p>`;
-
-      const polForState = dec.policies.find((p, pIdx) => pIdx % 4 === current) || dec.policies[0];
-      const mathContainer = document.getElementById('fsm-active-invariant-math');
-      if (polForState && polForState.rule_invariant) {
-        mathContainer.textContent = `Guard Equation: ${polForState.rule_invariant}`;
-      } else {
-        mathContainer.textContent = `Guard Equation: state_invariant(S_${stateLabels[current]}) = true`;
+      if (stages.length >= 3) {
+        return stages.slice(0, 4);
       }
+
+      return [
+        { num: 1, title: "Intake & Clinical/Operational Screening", desc: "Entity arrives; baseline telemetry and diagnostic parameters ingested into state context." },
+        { num: 2, title: "Emergency / Condition Determination", desc: "Diagnostic evaluation triggers stabilization orders without delay for pre-authorization." },
+        { num: 3, title: "Authorization & Consent Verification", desc: "Escalation or transfer authorized only via formal verified certificate or surrogate consent." },
+        { num: 4, title: "Acceptance & Secure Execution/Transport", desc: "Confirmed destination capacity verified; dedicated transport dispatched under audit hash." }
+      ];
+    }
+
+    // Tab 2: Workflow DAG & FSM Dataflow Execution View & Stepper
+    function renderFSMView() {
+      const dec = appState.currentDecomposition;
+      const stages = getParsedSOPStages();
+      const current = appState.currentFSMStateIndex;
+      const container = document.getElementById('fsm-states-cards');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      stages.forEach((stg, idx) => {
+        const isActive = idx === current;
+        const card = document.createElement('div');
+        const activePol = dec && dec.policies && dec.policies[idx] ? dec.policies[idx] : null;
+        const polBadge = activePol ? `Policy #${activePol.id}` : `Invariant #${idx + 1}`;
+
+        card.className = isActive
+          ? 'bg-slate-950 border-2 border-amber-500 rounded-xl p-3 relative transition-all duration-300 shadow-lg shadow-amber-500/20 scale-[1.02]'
+          : 'bg-slate-950/80 border border-slate-800 rounded-xl p-3 relative transition-all duration-300 opacity-60 hover:opacity-90 cursor-pointer';
+
+        card.onclick = () => {
+          appState.currentFSMStateIndex = idx;
+          renderFSMView();
+        };
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[11px] font-extrabold px-2 py-0.5 rounded ${isActive ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'bg-slate-800 text-slate-400'} font-mono">
+              STAGE S${idx + 1}
+            </span>
+            <span class="w-2.5 h-2.5 rounded-full ${isActive ? 'bg-amber-400 animate-ping' : 'bg-slate-700'}"></span>
+          </div>
+          <h4 class="font-bold text-xs ${isActive ? 'text-slate-100' : 'text-slate-300'} truncate" title="${stg.title}">${stg.title}</h4>
+          <p class="text-[11px] text-slate-400 mt-1 line-clamp-2 leading-relaxed">${stg.desc}</p>
+          <div class="mt-2.5 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <span>Guard: <span class="text-amber-400">${polBadge}</span></span>
+            <span>${isActive ? '● RUNNING' : '○ READY'}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      const currentStage = stages[current] || stages[0];
+      const activePol = dec && dec.policies && dec.policies[current] ? dec.policies[current] : null;
+
+      // Update Header Badges
+      const labelEl = document.getElementById('fsm-active-label');
+      const badgeEl = document.getElementById('fsm-step-badge');
+      if (labelEl) labelEl.textContent = `Stage ${current + 1} of 4: ${currentStage.title}`;
+      if (badgeEl) badgeEl.textContent = `STATE S${current + 1} ACTIVE`;
+
+      // Dataflow payloads per stage
+      const DATAFLOW_STAGES = [
+        {
+          input: {
+            "entity_id": "REQ-7749",
+            "intake_timestamp": new Date().toISOString(),
+            "presentation": currentStage.title,
+            "intake_metrics": { "elapsed_minutes": 7, "urgency": "CRITICAL", "preauth_status": "NONE" },
+            "source_origin": "DIRECT_INGEST"
+          },
+          action: `call_tool("execute_screening_and_intake", {\n  "entity_id": "REQ-7749",\n  "stage": "STAGE_1_TRIAGE",\n  "max_sla_window_min": 15\n})`,
+          output: {
+            "intake_verified": true,
+            "sla_elapsed_min": 7,
+            "mandatory_examination_completed": true,
+            "financial_inquiry_bypassed": true,
+            "next_state_authorized": "S2_CONDITION_EVALUATION"
+          },
+          governingLaw: activePol ? `Policy #${activePol.id} [${activePol.class_id}]: "${activePol.law_name}" (${activePol.rule_invariant})` : "Policy #151 [8.2]: Emergency Screening SLA (elapsed <= 15 min; no financial delay)",
+          transitionVector: "S1 (Intake) → S2 (Evaluation & Stabilization)"
+        },
+        {
+          input: {
+            "entity_id": "REQ-7749",
+            "evaluating_qmp": "DR_SARAH_LIN_MD",
+            "diagnostic_condition": "ACUTE_CRITICAL_EMC",
+            "delay_for_insurance_permitted": false
+          },
+          action: `call_tool("execute_stabilizing_interventions", {\n  "entity_id": "REQ-7749",\n  "diagnostic_tier": "TIER_1_EMERGENCY",\n  "prior_auth_bypass": true\n})`,
+          output: {
+            "emc_confirmed": true,
+            "stabilization_active": true,
+            "insurance_delay_prevented": true,
+            "clinical_response_code": "CR-STABILIZED-01",
+            "next_state_authorized": "S3_AUTHORIZATION"
+          },
+          governingLaw: activePol ? `Policy #${activePol.id} [${activePol.class_id}]: "${activePol.law_name}" (${activePol.rule_invariant})` : "Policy #48 [2.1]: Decision Rights & Physician Authority Veto on Financial Gatekeeping",
+          transitionVector: "S2 (Evaluation & Stabilization) → S3 (Authorization Gate)"
+        },
+        {
+          input: {
+            "entity_id": "REQ-7749",
+            "origin_facility_capability": "TIER_2_REGIONAL",
+            "destination_facility_needed": "TIER_1_SPECIALIZED_TERTIARY",
+            "risk_vs_benefit_ratio": 4.5
+          },
+          action: `call_tool("verify_consent_and_medical_necessity", {\n  "entity_id": "REQ-7749",\n  "physician_signature": "SIG_MD_9941",\n  "signed_consent": true\n})`,
+          output: {
+            "certificate_of_medical_necessity": "CERT-2026-NEC-88",
+            "surrogate_consent_verified": true,
+            "clinical_benefit_outweighs_risk": true,
+            "transfer_permitted": true
+          },
+          governingLaw: activePol ? `Policy #${activePol.id} [${activePol.class_id}]: "${activePol.law_name}" (${activePol.rule_invariant})` : "Policy #163 [6.2]: Informed Consent & Mandatory Medical Certificate Gate",
+          transitionVector: "S3 (Authorization Gate) → S4 (Acceptance & Secure Transport)"
+        },
+        {
+          input: {
+            "entity_id": "REQ-7749",
+            "destination_hub": "METRO_TERTIARY_CENTER",
+            "bed_capacity_verified": true,
+            "transit_protocol": "DEDICATED_ALS_CREW"
+          },
+          action: `call_tool("dispatch_als_transport_and_seal", {\n  "entity_id": "REQ-7749",\n  "bed_allocation_token": "BED-RES-209",\n  "als_unit_id": "ALS-RIG-04"\n})`,
+          output: {
+            "receiving_bed_confirmed": "BED-RES-209",
+            "als_crew_dispatched": true,
+            "workflow_terminal_status": "COMPLETED_AUDITED",
+            "sha256_audit_hash": "0xa4f8819c9e7b21"
+          },
+          governingLaw: activePol ? `Policy #${activePol.id} [${activePol.class_id}]: "${activePol.law_name}" (${activePol.rule_invariant})` : "Policy #194 [7.3]: Verified Destination Capacity Mandate (transit only upon acceptance)",
+          transitionVector: "S4 (Acceptance & Transport) → COMPLETED (Audited & Sealed)"
+        }
+      ];
+
+      const stageData = DATAFLOW_STAGES[current];
+
+      const inputJsonEl = document.getElementById('fsm-input-json');
+      const actionCodeEl = document.getElementById('fsm-action-code');
+      const outputJsonEl = document.getElementById('fsm-output-json');
+      const govLawEl = document.getElementById('fsm-governing-law');
+      const transVecEl = document.getElementById('fsm-transition-vector');
+      const transStatusEl = document.getElementById('fsm-transition-status');
+
+      if (inputJsonEl) inputJsonEl.textContent = JSON.stringify(stageData.input, null, 2);
+      if (actionCodeEl) actionCodeEl.textContent = stageData.action;
+      if (outputJsonEl) outputJsonEl.textContent = JSON.stringify(stageData.output, null, 2);
+      if (govLawEl) govLawEl.textContent = stageData.governingLaw;
+      if (transVecEl) transVecEl.textContent = stageData.transitionVector;
+      if (transStatusEl) transStatusEl.textContent = `Stage ${current + 1} Transition Authorized • Invariant Satisfied`;
+
+      // Build State Context Accumulator (accumulate all stages up to current)
+      const accumulatedContext = {
+        "workflow_id": "WF-SOP-" + (dec ? dec.summary.slice(0, 10).replace(/[^a-zA-Z0-9]/g, '') : "001"),
+        "active_sop": appState.currentPreset ? appState.currentPreset.title : "Active Decomposed SOP",
+        "current_fsm_stage": `S${current + 1}`,
+        "history": []
+      };
+
+      for (let i = 0; i <= current; i++) {
+        accumulatedContext.history.push({
+          "stage": `S${i + 1}`,
+          "title": stages[i] ? stages[i].title : `Stage ${i + 1}`,
+          "input": DATAFLOW_STAGES[i].input,
+          "action": DATAFLOW_STAGES[i].action.replace(/\n/g, ' '),
+          "output": DATAFLOW_STAGES[i].output,
+          "invariant_verified": DATAFLOW_STAGES[i].governingLaw
+        });
+      }
+
+      accumulatedContext["accumulated_state_delta"] = {};
+      for (let i = 0; i <= current; i++) {
+        Object.assign(accumulatedContext["accumulated_state_delta"], DATAFLOW_STAGES[i].output);
+      }
+
+      const contextEl = document.getElementById('fsm-context-json');
+      const keyCountEl = document.getElementById('fsm-context-key-count');
+      if (contextEl) {
+        contextEl.textContent = JSON.stringify(accumulatedContext, null, 2);
+      }
+      if (keyCountEl) {
+        keyCountEl.textContent = `${Object.keys(accumulatedContext["accumulated_state_delta"]).length} State Variables Accumulated (Stages 1..${current + 1})`;
+      }
+
+      lucide.createIcons();
     }
 
     function stepFSM(delta) {
@@ -2648,6 +2875,9 @@ state_machine:
 
       if (tabId === 'graph' && appState.network) {
         setTimeout(() => appState.network.fit(), 50);
+      }
+      if (tabId === 'fsm') {
+        renderFSMView();
       }
       if (tabId === 'declarative') {
         renderDeclarativeView();
